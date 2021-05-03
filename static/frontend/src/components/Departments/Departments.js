@@ -70,7 +70,6 @@ class Departments extends Component {
     }
 }
 
-
 const mapStateToProps = (state) => ({
     departments: state.departments.departments,
 });

@@ -1,84 +1,102 @@
-import React, {Component} from "react";
-import PropTypes from "prop-types";
-import {editPosition} from "../../../actions/positions";
+import React, {Component} from 'react';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import {getTextFieldType} from "../../../utils/getTextFieldType";
+import {getLabelName} from "../../../utils/getLabelName";
 import {connect} from "react-redux";
+import {editPosition} from "../../../actions/positions";
+import PropTypes from "prop-types";
+import EditIcon from "@material-ui/icons/Edit";
 
 class EditPosition extends Component {
     state = {
+        open: false,
+        id: 0,
         position_name: '',
         position_description: '',
-        savedId: 0,
-
     }
+
     static propTypes = {
         editPosition: PropTypes.func.isRequired,
     };
 
-    handleSelectChange(event) {
-        this.setState({...this.state, [event.target.name]: Number(event.target.value)});
+    componentDidMount() {
+        this.setState({
+            id: this.props.position.id,
+            position_name: this.props.position.position_name,
+            position_description: this.props.position.position_name,
+        })
     }
 
-    onChange = (e) => this.setState({...this.state, [e.target.name]: e.target.value});
-
-    onSubmit = (e) => {
-        e.preventDefault();
-        const {position_name, position_description} = this.state;
-        const position = {position_name, position_description};
-        this.props.editPosition(position, this.state.savedId);
+    handleClickOpen = () => {
+        this.setState({open: true})
     };
 
-    render() {
-        if (this.props.position.id) {
-            this.state = this.props.position
-            this.state.savedId = this.props.position.id
-            this.props.position.id = null
+    onChange = (e) => this.setState({[e.target.name]: e.target.value})
+
+    onSubmit = (e) => {
+        e.preventDefault()
+        const {id, position_name, position_description} = this.state;
+        const position = {id, position_name, position_description};
+        if (position_name && position_description) {
+            this.props.editPosition(position, id);
+            this.setState({open: false})
         }
-        const {position_name, position_description} = this.state;
+    };
+
+    handleClose = () => this.setState({open: false})
+
+    render() {
         return (
-            <div className="modal fade" id="changeWindow" tabIndex="-1" role="dialog" aria-hidden="true">
-                <div className="modal-dialog" role="document">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h4 className="modal-title" id="exampleModalLabel">Информация о дложности:</h4>
-                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">×</span>
-                            </button>
-                        </div>
-                        <form onSubmit={this.onSubmit}>
-                            <div className="modal-body">
-                                <div className="form-group">
-                                    <label htmlFor="name" className="form-control-label">Название:</label>
-                                    <input
-                                        type="text"
-                                        className="form-control border-dark"
-                                        name="position_name"
-                                        value={position_name}
+            <div style={{width: 5, height: 5, marginBottom: -5}}>
+                <EditIcon
+                    variant="outlined"
+                    onClick={this.handleClickOpen}
+                />
+                <Dialog open={this.state.open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
+                    <DialogTitle id="form-dialog-title">Информация по должности</DialogTitle>
+                    <form onSubmit={this.onSubmit}>
+                        <DialogContent>
+                            {Object.keys(this.state).map((keyName) =>
+                                (keyName !== "open" && keyName !== "id") ? (
+                                    <TextField
+                                        variant="outlined"
+                                        margin="normal"
+                                        required
+                                        fullWidth
+                                        type={getTextFieldType(keyName)}
+                                        key={keyName}
+                                        id={keyName}
+                                        value={this.state[keyName]}
+                                        label={getLabelName(keyName)}
+                                        name={keyName}
                                         onChange={this.onChange}
                                     />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="name" className="form-control-label">Описание:</label>
-                                    <input
-                                        type="text"
-                                        className="form-control border-dark"
-                                        name="position_description"
-                                        value={position_description}
-                                        onChange={this.onChange}
-                                    />
-                                </div>
-                                <div className="modal-footer">
-                                    <button type="submit" className="btn btn-success mr-auto">Сохранить</button>
-                                    <button type="button" className="btn btn-secondary" data-dismiss="modal">Отмена
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+                                ) : "")}
+                        </DialogContent>
+                        <DialogActions>
+                            <Button type="submit"
+                                    color="secondary"
+                                    variant="contained">
+                                Сохранить
+                            </Button>
+                            <Button onClick={this.handleClose}
+                                    variant="contained"
+                                    color="primary">
+                                Отмена
+                            </Button>
+                        </DialogActions>
+                    </form>
+                </Dialog>
             </div>
-        )
+        );
     }
 }
 
-const mapStateToProps = (state) => ({});
+const mapStateToProps = () => ({});
+
 export default connect(mapStateToProps, {editPosition})(EditPosition);

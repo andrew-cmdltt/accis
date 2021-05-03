@@ -76,10 +76,14 @@ class AddDepartment extends Component {
                                 ) : "")}
                         </DialogContent>
                         <DialogActions>
-                            <Button type="submit" color="primary">
+                            <Button type="submit"
+                                    color="secondary"
+                                    variant="contained">
                                 Сохранить
                             </Button>
-                            <Button onClick={this.handleClose} color="primary">
+                            <Button onClick={this.handleClose}
+                                    variant="contained"
+                                    color="primary">
                                 Отмена
                             </Button>
                         </DialogActions>

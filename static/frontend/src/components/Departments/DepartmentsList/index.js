@@ -1,7 +1,6 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {connect} from "react-redux";
-import {getDepartment} from "../../../actions/departments";
 import {DataGrid} from "@material-ui/data-grid";
 import EditDepartment from "../ModalWindows/EditDepartment";
 import AddDepartment from "../ModalWindows/AddDepartment";
@@ -55,4 +54,4 @@ class DepartmentsList extends Component {
 
 const mapStateToProps = () => ({});
 
-export default connect(mapStateToProps, {getDepartment})(DepartmentsList);
+export default connect(mapStateToProps)(DepartmentsList);

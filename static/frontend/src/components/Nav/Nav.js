@@ -40,7 +40,8 @@ class Nav extends Component {
                             </Typography>
                             <Button
                                 onClick={this.props.logout.bind(this)}
-                                color="inherit"
+                                color="secondary"
+                                variant="contained"
                             >
                                 Выйти
                             </Button>

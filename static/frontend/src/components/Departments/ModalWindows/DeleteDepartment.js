@@ -52,10 +52,15 @@ class DeleteDepartment extends Component {
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={this.handleClose} color="primary" autoFocus>
+                        <Button onClick={this.handleClose}
+                                color="primary"
+                                variant="contained"
+                                autoFocus>
                             Отмена
                         </Button>
-                        <Button onClick={this.onSubmit} color="primary">
+                        <Button onClick={this.onSubmit}
+                                color="secondary"
+                                variant="contained">
                             УДАЛИТЬ
                         </Button>
                     </DialogActions>
@@ -70,4 +75,4 @@ const mapStateToProps = (state) => ({
     departments: state.departments.departments,
 });
 
-export default connect(mapStateToProps, { deleteDepartment })(DeleteDepartment);
+export default connect(mapStateToProps, {deleteDepartment})(DeleteDepartment);

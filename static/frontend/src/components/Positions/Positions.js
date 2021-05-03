@@ -4,7 +4,6 @@ import {connect} from "react-redux";
 import {getSortedValues} from "../../utils/getSortedValues";
 import ReactPaginate from "react-paginate";
 import {getPositions} from "../../actions/positions";
-import AddPosition from "./ModalWindows/AddPosition";
 import PositionsList from "./PositionsList";
 import Nav from "../Nav/Nav";
 
@@ -50,39 +49,12 @@ class Positions extends Component {
 
         return (
             <div>
-                <Nav />
+                <Nav/>
+                <hr/>
                 <div className="container-fluid m-auto">
-                    <aside className="filter mt-2">
-                        <div className="mt-2">
-                            <button id="addButton" className="btn btn-success" type="button" data-toggle="modal"
-                                    data-target="#addWindow">добавить должность
-                            </button>
-                        </div>
-                    </aside>
-                    <hr/>
-                    <div className="row input-group input-group">
-                        <div className="ml-3">
-                            <span className="input-group-text">
-                                Сортировка по:
-                            </span>
-                        </div>
-                        <div className="ml-4">
-                            <select
-                                name="isAsc"
-                                onChange={this.handleSelectChange.bind(this)}
-                            >
-                                <option value={1}>Возрастанию</option>
-                                <option value={0}>Убыванию</option>
-                            </select>
-                        </div>
-                    </div>
-                    <hr/>
                     <PositionsList
                         positions={slice}
                     />
-                    <div className="AddPosition">
-                        <AddPosition />
-                    </div>
                     <ReactPaginate
                         previousLabel={"<<"}
                         nextLabel={">>"}

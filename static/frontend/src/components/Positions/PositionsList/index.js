@@ -1,66 +1,57 @@
 import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {connect} from "react-redux";
-import {getPosition} from "../../../actions/positions";
-import DeletePosition from "../ModalWindows/DeletePosition";
+import {DataGrid} from "@material-ui/data-grid";
 import EditPosition from "../ModalWindows/EditPosition";
+import AddPosition from "../ModalWindows/AddPosition";
+import DeletePosition from "../ModalWindows/DeletePosition";
 
 class PositionsList extends Component {
     static propTypes = {
-        getPosition: PropTypes.func.isRequired,
         positions: PropTypes.array.isRequired,
     };
     render() {
+        const columns = [
+            {
+                field: "actions",
+                sortable: false,
+                filterable: false,
+                headerName: (
+                    <AddPosition />
+                ),
+                width: 150,
+                renderCell: (params) => (
+                    <div>
+                        <strong>
+                            <EditPosition position={params.row}/>
+                        </strong>
+                        <strong>
+                            <DeletePosition
+                                id={params.id}
+                            />
+                        </strong>
+                    </div>
+                ),
+            },
+            { field: 'id', headerName: '№', width: 70 },
+            { field: 'position_name', headerName: 'Название', width: 150 },
+            { field: 'position_description', headerName: 'Описание', width: 150 },
+        ];
+
         return (
-            <div className="HavingCoursesList">
-                <table className="table table-responsive">
-                    <tbody>
-                    <tr>
-                        <th>№</th>
-                        <th>Название</th>
-                        <th>Описание</th>
-                        <th></th>
-                    </tr>
-                    {this.props.positions.map((position) =>
-                    <tr key={position.id}>
-                        <td><span className="badge badge-dark">{position.id}</span></td>
-                        <td><span>{position.position_name}</span></td>
-                        <td><span>{position.position_description}</span></td>
-                        <td colSpan="2">
-                            <button
-                                type="button"
-                                className="mr-2 btn btn-warning btn-sm"
-                                data-toggle="modal"
-                                data-target="#changeWindow"
-                                onClick={this.props.getPosition.bind(this, position.id)}
-                            >изменить
-                            </button>
-                            <button
-                                type="button"
-                                className="btn btn-danger btn-sm"
-                                data-toggle="modal"
-                                data-target="#deleteWindow"
-                                onClick={this.props.getPosition.bind(this, position.id)}
-                            >удалить
-                            </button>
-                        </td>
-                    </tr>
-                    )}
-                    </tbody>
-                </table>
-                <EditPosition
-                    position={this.props.position}
-                    positionId={this.props.position.id}
+            <div style={{ height: 300, width: '100%' }}>
+                <DataGrid
+                    rows={this.props.positions}
+                    columns={columns}
+                    pageSize={3}
+                    hideFooterPagination={true}
+                    hideFooterSelectedRowCount={true}
                 />
-                <DeletePosition positionId={this.props.position.id} />
             </div>
         )
     }
 }
 
-const mapStateToProps = (state) => ({
-    position: state.position.position,
+const mapStateToProps = () => ({});
 
-});
-
-export default connect(mapStateToProps, {getPosition})(PositionsList);
+export default connect(mapStateToProps)(PositionsList);
