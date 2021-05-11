@@ -1,49 +1,78 @@
-import React, {Component} from "react";
-import PropTypes from 'prop-types'
-import {deleteEmployee} from "../../../actions/employees";
+import React, {Component} from 'react';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DeleteIcon from "@material-ui/icons/Delete";
+import PropTypes from "prop-types";
 import {connect} from "react-redux";
+import {deleteEmployee} from "../../../actions/employees";
 
 class DeleteEmployee extends Component {
+    state = {
+        open: false
+    }
+
     static propTypes = {
         deleteEmployee: PropTypes.func.isRequired,
     };
+
+    handleClickOpen = () => {
+        this.setState({open: true});
+    };
+
+    handleClose = () => {
+        this.setState({open: false});
+    };
+
     onSubmit = (e) => {
         e.preventDefault();
-        this.props.deleteEmployee(this.props.employeeId)
+        this.props.deleteEmployee(this.props.id)
+        this.setState({open: false});
     }
+
     render() {
         return (
-            <div id="deleteWindow" className="modal fade" aria-hidden="true">
-                <div className="modal-dialog" role="document">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h4 className="modal-title">Вы действительно хотите удалить сотрудника?</h4>
-                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">×</span>
-                            </button>
-                        </div>
-                        <div className="modal-body">
-                            <p>Вся информация будет удалена из системы. Восстановить данные невозможно.</p>
-                        </div>
-
-                            <div className="modal-footer">
-                                <button
-                                    type="button"
-                                    className="btn btn-danger mr-auto"
-                                    onClick={this.props.deleteEmployee.bind(this, this.props.employeeId)}
-                                    data-dismiss="modal"
-                                >УДАЛИТЬ</button>
-                                <button type="button" className="btn btn-secondary" data-dismiss="modal">Отмена</button>
-                            </div>
-                    </div>
-                </div>
+            <div style={{width: 5, height: 5, marginBottom: 30, marginLeft: 100}}>
+                <DeleteIcon
+                    onClick={this.handleClickOpen}
+                />
+                <Dialog
+                    open={this.state.open}
+                    onClose={this.handleClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">{"Вы действительно хотите удалить сотрудника?"}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            Вся информация будет удалена из системы. Восстановить данные невозможно.
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.handleClose}
+                                color="primary"
+                                variant="contained"
+                                autoFocus>
+                            Отмена
+                        </Button>
+                        <Button onClick={this.onSubmit}
+                                color="secondary"
+                                variant="contained">
+                            УДАЛИТЬ
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </div>
-        )
+        );
     }
+
 }
 
 const mapStateToProps = (state) => ({
     employees: state.employees.employees,
 });
 
-export default connect(mapStateToProps, { deleteEmployee })(DeleteEmployee);
+export default connect(mapStateToProps, {deleteEmployee})(DeleteEmployee);

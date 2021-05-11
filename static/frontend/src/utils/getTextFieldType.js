@@ -4,6 +4,8 @@ export function getTextFieldType(keyName) {
             return "login"
         case "password":
             return "password"
+        case "birth_date":
+            return "date"
         default:
             return "text"
     }

@@ -9,6 +9,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
+	"time"
 )
 
 func main() {
@@ -65,6 +67,9 @@ func main() {
 	port := os.Getenv("PORT")
 
 	println("Server is started on port:", port)
+
+	openBrowser(fmt.Sprintf("http://localhost%s/", port))
+
 	err := http.ListenAndServe(port, nil)
 
 	if err != nil {
@@ -83,5 +88,13 @@ func mainPage(w http.ResponseWriter, r *http.Request) {
 	if err := tmpl.Execute(w, nil); err != nil {
 		http.Error(w, err.Error(), 400)
 		return
+	}
+}
+
+func openBrowser(url string) {
+	<-time.After(100 * time.Millisecond)
+	err := exec.Command("cmd", "/c", "start", url).Start()
+	if err != nil {
+		log.Println(err)
 	}
 }

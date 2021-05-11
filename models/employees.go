@@ -196,7 +196,6 @@ func GenerateJWT(login, password string, key []byte) AuthUser {
 		authUser.User.PositionId = employee.PositionID
 		authUser.Token = tokenString
 
-		// it is KASTIL to drop last auth user data from memory:)
 		employee = Employee{}
 	}
 	return authUser

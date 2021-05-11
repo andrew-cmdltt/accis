@@ -3,9 +3,21 @@ import PropTypes from "prop-types";
 import {connect} from "react-redux";
 import {addEmployee} from "../../../actions/employees";
 import {getRoleIdByPositionId} from "../../../utils/roles/getRoleIdByPositionId";
+import {FormControl, Icon, InputLabel, Select, withStyles} from "@material-ui/core";
+import Dialog from "@material-ui/core/Dialog";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import TextField from "@material-ui/core/TextField";
+import {getTextFieldType} from "../../../utils/getTextFieldType";
+import {getLabelName} from "../../../utils/getLabelName";
+import DialogActions from "@material-ui/core/DialogActions";
+import Button from "@material-ui/core/Button";
+import {compose} from "redux";
+import {styles} from "../styles";
 
 class AddEmployee extends Component {
     state = {
+        open: false,
         full_name: '',
         birth_date: '',
         phone_number: '',
@@ -27,215 +39,133 @@ class AddEmployee extends Component {
         this.setState({[event.target.name]: Number(event.target.value)});
     }
 
+    handleClickOpen = () => {
+        this.setState({open: true})
+    };
+
+    handleClose = () => {
+        this.setState({open: false})
+    };
+
     onChange = (e) => this.setState({[e.target.name]: e.target.value});
 
     onSubmit = (e) => {
         e.preventDefault();
-        const {
-            full_name,
-            birth_date,
-            phone_number,
-            email,
-            passport_data,
-            department_id,
-            position_id,
-            role_id,
-            login,
-            password,
-            is_authorized
-        } = this.state;
-        const employee = {
-            full_name,
-            birth_date,
-            phone_number,
-            email,
-            passport_data,
-            department_id,
-            role_id,
-            position_id,
-            login,
-            password,
-            is_authorized
-        };
 
         if (this.props.isAdmin) {
-            employee.role_id = getRoleIdByPositionId(employee.position_id)
-            if (employee.role_id === 2 || employee.role_id === 4) {
-                employee.is_authorized = true
+            this.state.role_id = getRoleIdByPositionId(this.state.position_id)
+            if (this.state.role_id === 2 || this.state.role_id === 4) {
+                this.state.is_authorized = true
             }
         }
 
-        this.props.addEmployee(employee);
-
-        this.setState({
-            full_name: '',
-            birth_date: '',
-            phone_number: '',
-            email: '',
-            passport_data: '',
-            department_id: 0,
-            position_id: 0,
-            is_authorized: false,
-            login: '',
-            password: '',
-            role_id: 5
-        });
+        this.props.addEmployee(this.state);
+        this.setState({open: false})
     };
 
     render() {
-        const {
-            full_name,
-            birth_date,
-            phone_number,
-            email,
-            passport_data,
-            department_id,
-            position_id,
-            login,
-            password,
-        } = this.state;
+        const {classes} = this.props;
+        let ignorable = ["open", "department_id", "id", "position_id", "role_id", "is_authorized"]
+
         return (
-            <div className="modal fade" id="addWindow" tabIndex="-1" role="dialog" aria-hidden="true">
-                <div className="modal-dialog" role="document">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h4 className="modal-title" id="exampleModalLabel">Добавление нового сотрудника</h4>
-                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">×</span>
-                            </button>
-                        </div>
-                        <form onSubmit={this.onSubmit}>
-                            <div className="modal-body">
-                                <div className="form-group">
-                                    <label className="form-control-label">Фамилия, имя и отчество:</label>
-                                    <input
-                                        type="text"
-                                        className="form-control border-dark"
-                                        name="full_name"
-                                        value={full_name}
-                                        onChange={this.onChange}
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label className="form-control-label">Дата рождения:</label>
-                                    <input
-                                        className="form-control border-dark"
-                                        type="date"
-                                        name="birth_date"
-                                        value={birth_date}
-                                        onChange={this.onChange}
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label className="form-control-label">Номер телефона:</label>
-                                    <input
-                                        type="text"
-                                        className="form-control border-dark"
-                                        name="phone_number"
-                                        value={phone_number}
-                                        onChange={this.onChange}
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label className="form-control-label">Email:</label>
-                                    <input
-                                        type="text"
-                                        className="form-control border-dark"
-                                        name="email"
-                                        value={email}
-                                        onChange={this.onChange}
-                                    />
-                                </div>
-                                {this.props.isAdmin ? (
-                                    <>
-                                        <div className="form-group">
-                                            <label className="form-control-label">Логин:</label>
-                                            <input
-                                                type="text"
-                                                className="form-control border-dark"
-                                                name="login"
-                                                value={login}
-                                                onChange={this.onChange}
-                                            />
-                                        </div>
-                                        <div className="form-group">
-                                            <label className="form-control-label">Пароль:</label>
-                                            <input
-                                                type="password"
-                                                className="form-control border-dark"
-                                                name="password"
-                                                value={password}
-                                                onChange={this.onChange}
-                                            />
-                                        </div>
-                                    </>
-                                    )
-                                    :
-                                    ""
-                                }
-                                <div className="form-group">
-                                    <label className="form-control-label">Паспортные данные:</label>
-                                    <input
-                                        type="text"
-                                        className="form-control border-dark"
-                                        name="passport_data"
-                                        value={passport_data}
-                                        onChange={this.onChange}
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label className="form-control-label">Отдел:</label>
-                                    <select
-                                        value={department_id}
-                                        onChange={this.handleSelectChange.bind(this)}
-                                        className="form-control"
-                                        name="department_id"
-                                    >
-                                        <option value="0">Не указано</option>
-                                        {this.props.departments.map((department) =>
-                                            <option
-                                                key={department.id}
-                                                value={department.id}
+            <div>
+                <Icon color="primary"
+                      variant="outlined"
+                      onClick={this.handleClickOpen}
+                      style={
+                          {fontSize: 30, marginLeft: 40, marginTop: 20}}
+                >
+                    add_circle
+                </Icon>
+                <Dialog open={this.state.open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
+                    <DialogTitle id="form-dialog-title">Добавление нового сотрудника</DialogTitle>
+                    <form onSubmit={this.onSubmit}>
+                        <DialogContent>
+                            {Object.keys(this.state).map((keyName) =>
+                                (!ignorable.includes(keyName))
+                                    ? (
+                                        <TextField
+                                            variant="outlined"
+                                            margin="normal"
+                                            required
+                                            fullWidth
+                                            type={getTextFieldType(keyName)}
+                                            key={keyName}
+                                            id={keyName}
+                                            label={getLabelName(keyName)}
+                                            name={keyName}
+                                            onChange={this.onChange}
+                                            InputLabelProps={{
+                                                shrink: true,
+                                            }}
+                                        />
+                                    ) : "")}
+                            {Object.keys(this.state).map((keyName) =>
+                                keyName !== "open"
+                                && (keyName === "department_id"
+                                    || keyName === "position_id")
+                                    ? (
+                                        <FormControl key={keyName} variant="outlined" className={classes.formControl}>
+                                            <InputLabel htmlFor={`outlined-${keyName}-native-simple`}>
+                                                {getLabelName(keyName)}
+                                            </InputLabel>
+                                            <Select
+                                                native
+                                                label={getLabelName(keyName)}
+                                                value={this.state[keyName]}
+                                                onChange={this.handleSelectChange.bind(this)}
+                                                name={keyName}
+                                                id={`outlined-${keyName}-native-simple`}
                                             >
-                                                {department.department_name}
-                                            </option>
-                                        )}
+                                                <option value="0">Не указано</option>
+                                                {keyName === "department_id" ? (<>
+                                                        {this.props.departments.map((department) =>
+                                                            <option
+                                                                key={department.id}
+                                                                value={department.id}
+                                                            >
+                                                                {department.department_name}
+                                                            </option>
+                                                        )}
+                                                    </>
+                                                ) : (<>
+                                                        {this.props.positions.map((position) =>
+                                                            <option
+                                                                key={position.id}
+                                                                value={position.id}
+                                                            >
+                                                                {position.position_name}
+                                                            </option>
+                                                        )}
+                                                    </>
+                                                )}
+                                            </Select>
+                                        </FormControl>
 
-                                    </select>
-                                </div>
-                                <div className="form-group">
-                                    <label className="form-control-label">Должность:</label>
-                                    <select
-                                        value={position_id}
-                                        onChange={this.handleSelectChange.bind(this)}
-                                        className="form-control"
-                                        name="position_id"
-                                    >
-                                        <option value="0">Не указано</option>
-                                        {this.props.positions.map((position) =>
-                                            <option
-                                                key={position.id}
-                                                value={position.id}
-                                            >
-                                                {position.position_name}
-                                            </option>
-                                        )}
-
-                                    </select>
-                                </div>
-                                <div className="modal-footer">
-                                    <button type="submit" className="btn btn-success mr-auto">Сохранить</button>
-                                    <button type="button" className="btn btn-secondary" data-dismiss="modal">Отмена
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+                                    ) : "")}
+                        </DialogContent>
+                        <DialogActions>
+                            <Button type="submit"
+                                    color="secondary"
+                                    variant="contained">
+                                Сохранить
+                            </Button>
+                            <Button onClick={this.handleClose}
+                                    variant="contained"
+                                    color="primary">
+                                Отмена
+                            </Button>
+                        </DialogActions>
+                    </form>
+                </Dialog>
             </div>
         )
     }
 }
 
-const mapStateToProps = (state) => ({});
-export default connect(mapStateToProps, {addEmployee})(AddEmployee);
+const mapStateToProps = () => ({});
+
+export default compose(
+    connect(mapStateToProps, {addEmployee}),
+    withStyles(styles),
+)(AddEmployee)

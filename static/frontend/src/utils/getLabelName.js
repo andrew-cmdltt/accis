@@ -10,6 +10,20 @@ export function getLabelName(keyName) {
         case "department_description":
         case "position_description":
             return "Описание"
+        case "full_name":
+            return "Фамилия, имя и отчество"
+        case "birth_date":
+            return "Дата рождения"
+        case "phone_number":
+            return "Номер телефона"
+        case "email":
+            return "Email"
+        case "passport_data":
+            return "Паспортные данные"
+        case "department_id":
+            return "Отдел"
+        case "position_id":
+            return "Должность"
         default:
             return ""
     }

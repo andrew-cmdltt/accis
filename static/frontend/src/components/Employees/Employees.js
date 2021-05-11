@@ -7,7 +7,6 @@ import {getEmployees} from "../../actions/employees";
 import {getDepartments} from "../../actions/departments";
 import {getPositions} from "../../actions/positions";
 import EmployeesList from "./EmployeesList";
-import AddEmployee from "./ModalWindows/AddEmployee";
 import {getRoleName} from "../../utils/roles/getRoleName";
 import Nav from "../Nav/Nav";
 
@@ -67,30 +66,6 @@ class Employees extends Component {
             <div>
                 <Nav/>
                 <div className="container-fluid m-auto">
-                    <aside className="filter mt-2">
-                        <div className="mt-2">
-                            <button id="addButton" className="btn btn-success" type="button" data-toggle="modal"
-                                    data-target="#addWindow">добавить сотрудника
-                            </button>
-                        </div>
-                    </aside>
-                    <hr/>
-                    <div className="row input-group input-group">
-                        <div className="ml-3">
-                            <span className="input-group-text">
-                                Сортировка по:
-                            </span>
-                        </div>
-                        <div className="ml-4">
-                            <select
-                                name="isAsc"
-                                onChange={this.handleSelectChange.bind(this)}
-                            >
-                                <option value={1}>Возрастанию</option>
-                                <option value={0}>Убыванию</option>
-                            </select>
-                        </div>
-                    </div>
                     <hr/>
                     <EmployeesList
                         employees={slice}
@@ -98,13 +73,6 @@ class Employees extends Component {
                         positions={this.props.positions}
                         isAdmin={isAdmin}
                     />
-                    <div className="AddPosition">
-                        <AddEmployee
-                            departments={this.props.departments}
-                            positions={this.props.positions}
-                            isAdmin={isAdmin}
-                        />
-                    </div>
                     <ReactPaginate
                         previousLabel={"<<"}
                         nextLabel={">>"}
