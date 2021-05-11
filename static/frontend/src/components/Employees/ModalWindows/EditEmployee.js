@@ -16,6 +16,7 @@ import {compose} from "redux";
 import {styles} from "../styles";
 import EditIcon from "@material-ui/icons/Edit";
 import {getFieldValue} from "../../../utils/getFieldValue";
+import {getIgnorableKeys} from "../../../utils/getIgnorableKeys";
 
 class EditEmployee extends Component {
     state = {
@@ -26,15 +27,14 @@ class EditEmployee extends Component {
         phone_number: '',
         email: '',
         passport_data: '',
+        login: '',
+        password: '',
         department_id: 0,
         position_id: 0,
         role_id: 2,
-        is_authorized: false,
-        login: '',
-        password: ''
-
-
+        is_authorized: false
     }
+
     static propTypes = {
         editEmployee: PropTypes.func.isRequired,
     };
@@ -62,31 +62,33 @@ class EditEmployee extends Component {
 
     handleClose = () => this.setState({open: false})
 
-    handleSelectChange(event) {
-        this.setState({...this.state, [event.target.name]: Number(event.target.value)});
+    handleSelectChange(e) {
+        let role_id
+        if (e.target.name === "position_id") {
+            role_id = getRoleIdByPositionId(Number(e.target.value))
+            this.setState({...this.state, role_id: role_id})
+            if (role_id === 2 || role_id === 4) {
+                this.setState({...this.state, is_authorized: true})
+
+            } else {
+                this.setState({is_authorized: false})
+            }
+        }
+
+        this.setState({...this.state, [e.target.name]: Number(e.target.value)});
     }
 
     onChange = (e) => this.setState({...this.state, [e.target.name]: e.target.value});
 
     onSubmit = (e) => {
         e.preventDefault();
-
-        if (this.props.isAdmin) {
-            this.state.role_id = getRoleIdByPositionId(this.state.position_id)
-            if (this.state.role_id === 2 || this.state.role_id === 4) {
-                this.state.is_authorized = true
-            }
-        }
-
         this.props.editEmployee(this.state, this.state.id);
         this.setState({open: false})
     };
 
     render() {
         const {classes} = this.props;
-
-        let ignorable = ["open", "department_id", "id", "position_id", "role_id", "is_authorized"]
-
+        console.log(this.state)
         return (
             <div style={{width: 5, height: 5, marginBottom: -5}}>
                 <EditIcon
@@ -98,66 +100,64 @@ class EditEmployee extends Component {
                     <form onSubmit={this.onSubmit}>
                         <DialogContent>
                             {Object.keys(this.state).map((keyName) =>
-                                (!ignorable.includes(keyName))
-                                    ? (
-                                        <TextField
-                                            variant="outlined"
-                                            margin="normal"
-                                            required
-                                            fullWidth
-                                            type={getTextFieldType(keyName)}
-                                            value={getFieldValue(keyName, this.state[keyName])}
-                                            key={keyName}
-                                            id={keyName}
-                                            label={getLabelName(keyName)}
-                                            name={keyName}
-                                            onChange={this.onChange}
-                                            InputLabelProps={{
-                                                shrink: true,
-                                            }}
-                                        />
-                                    ) : "")}
-                            {Object.keys(this.state).map((keyName) =>
-                                keyName !== "open"
-                                && (keyName === "department_id"
-                                    || keyName === "position_id")
-                                    ? (
-                                        <FormControl key={keyName} variant="outlined" className={classes.formControl}>
-                                            <InputLabel htmlFor={`outlined-${keyName}-native-simple`}>
-                                                {getLabelName(keyName)}
-                                            </InputLabel>
-                                            <Select
-                                                native
-                                                label={getLabelName(keyName)}
-                                                value={this.state[keyName]}
-                                                onChange={this.handleSelectChange.bind(this)}
-                                                name={keyName}
-                                                id={`outlined-${keyName}-native-simple`}
-                                            >
-                                                <option value="0">Не указано</option>
-                                                {keyName === "department_id" ? (<>
-                                                        {this.props.departments.map((department) =>
-                                                            <option
-                                                                key={department.id}
-                                                                value={department.id}
-                                                            >
-                                                                {department.department_name}
-                                                            </option>
+                                (!getIgnorableKeys(this.state["is_authorized"]).includes(keyName))
+                                    ? (<div key={keyName}>
+                                            {(keyName === "department_id" || keyName === "position_id") ? (
+                                                <FormControl key={keyName} variant="outlined"
+                                                             className={classes.formControl}>
+                                                    <InputLabel htmlFor={`outlined-${keyName}-native-simple`}>
+                                                        {getLabelName(keyName)}
+                                                    </InputLabel>
+                                                    <Select
+                                                        native
+                                                        label={getLabelName(keyName)}
+                                                        value={this.state[keyName]}
+                                                        onChange={this.handleSelectChange.bind(this)}
+                                                        name={keyName}
+                                                        id={`outlined-${keyName}-native-simple`}
+                                                    >
+                                                        <option value="0">Не указано</option>
+                                                        {keyName === "department_id" ? (<>
+                                                                {this.props.departments.map((department) =>
+                                                                    <option
+                                                                        key={department.id}
+                                                                        value={department.id}
+                                                                    >
+                                                                        {department.department_name}
+                                                                    </option>
+                                                                )}
+                                                            </>
+                                                        ) : (<>
+                                                                {this.props.positions.map((position) =>
+                                                                    <option
+                                                                        key={position.id}
+                                                                        value={position.id}
+                                                                    >
+                                                                        {position.position_name}
+                                                                    </option>
+                                                                )}
+                                                            </>
                                                         )}
-                                                    </>
-                                                ) : (<>
-                                                        {this.props.positions.map((position) =>
-                                                            <option
-                                                                key={position.id}
-                                                                value={position.id}
-                                                            >
-                                                                {position.position_name}
-                                                            </option>
-                                                        )}
-                                                    </>
-                                                )}
-                                            </Select>
-                                        </FormControl>
+                                                    </Select>
+                                                </FormControl>
+                                            ) : (
+                                                <TextField
+                                                    variant="outlined"
+                                                    margin="normal"
+                                                    required
+                                                    fullWidth
+                                                    type={getTextFieldType(keyName)}
+                                                    value={getFieldValue(keyName, this.state[keyName])}
+                                                    key={keyName}
+                                                    id={keyName}
+                                                    label={getLabelName(keyName)}
+                                                    name={keyName}
+                                                    onChange={this.onChange}
+                                                    InputLabelProps={{
+                                                        shrink: true,
+                                                    }}
+                                                />)}
+                                        </div>
 
                                     ) : "")}
                         </DialogContent>
