@@ -2,7 +2,6 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {editEmployee} from "../../../actions/employees";
 import {connect} from "react-redux";
-import {getRoleIdByPositionId} from "../../../utils/roles/getRoleIdByPositionId";
 import {FormControl, InputLabel, Select, withStyles} from "@material-ui/core";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
@@ -52,31 +51,15 @@ class EditEmployee extends Component {
             role_id: this.props.employee.role_id,
             is_authorized: this.props.employee.is_authorized,
             login: this.props.employee.login,
-            password: "********",
+            password: this.props.employee.password
         })
     }
 
-    handleClickOpen = () => {
-        this.setState({open: true})
-    };
+    handleClickOpen = () => this.setState({open: true})
 
     handleClose = () => this.setState({open: false})
 
-    handleSelectChange(e) {
-        let role_id
-        if (e.target.name === "position_id") {
-            role_id = getRoleIdByPositionId(Number(e.target.value))
-            this.setState({...this.state, role_id: role_id})
-            if (role_id === 2 || role_id === 4) {
-                this.setState({...this.state, is_authorized: true})
-
-            } else {
-                this.setState({is_authorized: false})
-            }
-        }
-
-        this.setState({...this.state, [e.target.name]: Number(e.target.value)});
-    }
+    handleSelectChange = (e) => this.setState({...this.state, [e.target.name]: Number(e.target.value)})
 
     onChange = (e) => this.setState({...this.state, [e.target.name]: e.target.value});
 
@@ -88,7 +71,8 @@ class EditEmployee extends Component {
 
     render() {
         const {classes} = this.props;
-        console.log(this.state)
+        const ignorable = ["open", "id", "role_id", "is_authorized", "position_id"]
+
         return (
             <div style={{width: 5, height: 5, marginBottom: -5}}>
                 <EditIcon
@@ -100,9 +84,9 @@ class EditEmployee extends Component {
                     <form onSubmit={this.onSubmit}>
                         <DialogContent>
                             {Object.keys(this.state).map((keyName) =>
-                                (!getIgnorableKeys(this.state["is_authorized"]).includes(keyName))
+                                (!getIgnorableKeys(ignorable, this.state["is_authorized"]).includes(keyName))
                                     ? (<div key={keyName}>
-                                            {(keyName === "department_id" || keyName === "position_id") ? (
+                                            {keyName === "department_id" ? (
                                                 <FormControl key={keyName} variant="outlined"
                                                              className={classes.formControl}>
                                                     <InputLabel htmlFor={`outlined-${keyName}-native-simple`}>
@@ -117,26 +101,14 @@ class EditEmployee extends Component {
                                                         id={`outlined-${keyName}-native-simple`}
                                                     >
                                                         <option value="0">Не указано</option>
-                                                        {keyName === "department_id" ? (<>
-                                                                {this.props.departments.map((department) =>
-                                                                    <option
-                                                                        key={department.id}
-                                                                        value={department.id}
-                                                                    >
-                                                                        {department.department_name}
-                                                                    </option>
-                                                                )}
-                                                            </>
-                                                        ) : (<>
-                                                                {this.props.positions.map((position) =>
-                                                                    <option
-                                                                        key={position.id}
-                                                                        value={position.id}
-                                                                    >
-                                                                        {position.position_name}
-                                                                    </option>
-                                                                )}
-                                                            </>
+
+                                                        {this.props.departments.map((department) =>
+                                                            <option
+                                                                key={department.id}
+                                                                value={department.id}
+                                                            >
+                                                                {department.department_name}
+                                                            </option>
                                                         )}
                                                     </Select>
                                                 </FormControl>

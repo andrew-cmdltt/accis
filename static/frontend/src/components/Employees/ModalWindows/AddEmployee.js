@@ -52,13 +52,9 @@ class AddEmployee extends Component {
         this.setState({[e.target.name]: Number(e.target.value)});
     }
 
-    handleClickOpen = () => {
-        this.setState({open: true})
-    };
+    handleClickOpen = () => this.setState({open: true})
 
-    handleClose = () => {
-        this.setState({open: false})
-    };
+    handleClose = () => this.setState({open: false})
 
     onChange = (e) => this.setState({[e.target.name]: e.target.value});
 
@@ -70,6 +66,7 @@ class AddEmployee extends Component {
 
     render() {
         const {classes} = this.props;
+        const ignorable = ["open", "id", "role_id", "is_authorized"]
 
         return (
             <div>
@@ -86,7 +83,7 @@ class AddEmployee extends Component {
                     <form onSubmit={this.onSubmit}>
                         <DialogContent>
                             {Object.keys(this.state).map((keyName) =>
-                                (!getIgnorableKeys(this.state["is_authorized"]).includes(keyName))
+                                (!getIgnorableKeys(ignorable, this.state["is_authorized"]).includes(keyName))
                                     ? (<div key={keyName}>
                                             {(keyName === "department_id" || keyName === "position_id") ? (
                                                 <FormControl key={keyName} variant="outlined"
