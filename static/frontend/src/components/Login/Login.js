@@ -38,6 +38,8 @@ class Login extends Component  {
     onChange = (e) => this.setState({ [e.target.name]: e.target.value });
 
     render() {
+        console.log("load changes")
+
         if (this.props.isAuthenticated) {
             return <Redirect to="/departments" />;
         }

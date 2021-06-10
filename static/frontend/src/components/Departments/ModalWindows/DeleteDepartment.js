@@ -9,6 +9,10 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import PropTypes from "prop-types";
 import {connect} from "react-redux";
 import {deleteDepartment} from "../../../actions/departments";
+import CloseIcon from "@material-ui/icons/Close";
+import {IconButton, withStyles} from "@material-ui/core";
+import {compose} from "redux";
+import {styles} from "../../../styles";
 
 class DeleteDepartment extends Component {
     state = {
@@ -34,6 +38,8 @@ class DeleteDepartment extends Component {
     }
 
     render() {
+        const { classes } = this.props;
+
         return (
             <div style={{width: 5, height: 5, marginBottom: 30, marginLeft: 100}}>
                 <DeleteIcon
@@ -46,6 +52,9 @@ class DeleteDepartment extends Component {
                     aria-describedby="alert-dialog-description"
                 >
                     <DialogTitle id="alert-dialog-title">{"Вы действительно хотите удалить отдел?"}</DialogTitle>
+                    <IconButton aria-label="close" className={classes.closeButton} onClick={this.handleClose}>
+                        <CloseIcon />
+                    </IconButton>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
                             Вся информация будет удалена из системы. Восстановить данные невозможно.
@@ -75,4 +84,7 @@ const mapStateToProps = (state) => ({
     departments: state.departments.departments,
 });
 
-export default connect(mapStateToProps, {deleteDepartment})(DeleteDepartment);
+export default compose(
+    connect(mapStateToProps, {deleteDepartment}),
+    withStyles(styles)
+)(DeleteDepartment)

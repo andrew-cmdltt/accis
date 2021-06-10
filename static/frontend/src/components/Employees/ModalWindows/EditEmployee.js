@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import PropTypes from "prop-types";
 import {editEmployee} from "../../../actions/employees";
 import {connect} from "react-redux";
-import {FormControl, InputLabel, Select, withStyles} from "@material-ui/core";
+import {FormControl, IconButton, InputLabel, Select, withStyles} from "@material-ui/core";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -16,6 +16,7 @@ import {styles} from "../styles";
 import EditIcon from "@material-ui/icons/Edit";
 import {getFieldValue} from "../../../utils/getFieldValue";
 import {getIgnorableKeys} from "../../../utils/getIgnorableKeys";
+import CloseIcon from "@material-ui/icons/Close";
 
 class EditEmployee extends Component {
     state = {
@@ -81,6 +82,9 @@ class EditEmployee extends Component {
                 />
                 <Dialog open={this.state.open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
                     <DialogTitle id="form-dialog-title">Добавление нового сотрудника</DialogTitle>
+                    <IconButton aria-label="close" className={classes.closeButton} onClick={this.handleClose}>
+                        <CloseIcon />
+                    </IconButton>
                     <form onSubmit={this.onSubmit}>
                         <DialogContent>
                             {Object.keys(this.state).map((keyName) =>

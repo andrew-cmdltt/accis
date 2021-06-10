@@ -8,9 +8,13 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import {getTextFieldType} from "../../../utils/getTextFieldType";
 import {getLabelName} from "../../../utils/getLabelName";
 import {connect} from "react-redux";
-import {editPosition} from "../../../actions/positions";
+import {deletePosition, editPosition} from "../../../actions/positions";
 import PropTypes from "prop-types";
 import EditIcon from "@material-ui/icons/Edit";
+import {compose} from "redux";
+import {IconButton, withStyles} from "@material-ui/core";
+import {styles} from "../../../styles";
+import CloseIcon from "@material-ui/icons/Close";
 
 class EditPosition extends Component {
     state = {
@@ -51,6 +55,8 @@ class EditPosition extends Component {
     handleClose = () => this.setState({open: false})
 
     render() {
+        const { classes } = this.props;
+
         return (
             <div style={{width: 5, height: 5, marginBottom: -5}}>
                 <EditIcon
@@ -59,6 +65,9 @@ class EditPosition extends Component {
                 />
                 <Dialog open={this.state.open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
                     <DialogTitle id="form-dialog-title">Информация по должности</DialogTitle>
+                    <IconButton aria-label="close" className={classes.closeButton} onClick={this.handleClose}>
+                        <CloseIcon />
+                    </IconButton>
                     <form onSubmit={this.onSubmit}>
                         <DialogContent>
                             {Object.keys(this.state).map((keyName) =>
@@ -99,4 +108,7 @@ class EditPosition extends Component {
 
 const mapStateToProps = () => ({});
 
-export default connect(mapStateToProps, {editPosition})(EditPosition);
+export default compose(
+    connect(mapStateToProps, {editPosition}),
+    withStyles(styles)
+)(EditPosition)

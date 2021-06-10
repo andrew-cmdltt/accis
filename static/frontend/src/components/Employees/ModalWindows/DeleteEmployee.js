@@ -8,7 +8,11 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DeleteIcon from "@material-ui/icons/Delete";
 import PropTypes from "prop-types";
 import {connect} from "react-redux";
-import {deleteEmployee} from "../../../actions/employees";
+import {deleteEmployee, editEmployee} from "../../../actions/employees";
+import {IconButton, withStyles} from "@material-ui/core";
+import CloseIcon from "@material-ui/icons/Close";
+import {compose} from "redux";
+import {styles} from "../styles";
 
 class DeleteEmployee extends Component {
     state = {
@@ -34,6 +38,8 @@ class DeleteEmployee extends Component {
     }
 
     render() {
+        const {classes} = this.props;
+
         return (
             <div style={{width: 5, height: 5, marginBottom: 30, marginLeft: 100}}>
                 <DeleteIcon
@@ -46,6 +52,9 @@ class DeleteEmployee extends Component {
                     aria-describedby="alert-dialog-description"
                 >
                     <DialogTitle id="alert-dialog-title">{"Вы действительно хотите удалить сотрудника?"}</DialogTitle>
+                    <IconButton aria-label="close" className={classes.closeButton} onClick={this.handleClose}>
+                        <CloseIcon />
+                    </IconButton>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
                             Вся информация будет удалена из системы. Восстановить данные невозможно.
@@ -75,4 +84,8 @@ const mapStateToProps = (state) => ({
     employees: state.employees.employees,
 });
 
-export default connect(mapStateToProps, {deleteEmployee})(DeleteEmployee);
+export default compose(
+    connect(mapStateToProps, {deleteEmployee}),
+    withStyles(styles),
+)(DeleteEmployee)
+

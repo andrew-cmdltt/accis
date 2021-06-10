@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import {HashRouter as Router, Route, Switch} from "react-router-dom";
 import {Provider} from 'react-redux'
 import store from "../store";
-import Login from "./Login/Login";
 import PropTypes from "prop-types";
 import Departments from "./Departments/Departments";
 import Positions from "./Positions/Positions";
@@ -20,12 +19,14 @@ class App extends Component {
     };
 
     render() {
+        console.log("load changes")
         return (
             <Provider store={store}>
                 <Router>
                     <div>
                         <Switch>
                             <Route path="/login" component={SignIn} />
+                            <Route exact path="/" component={SignIn} />
                             <Route path="/departments" component={Departments} />
                             <Route path="/positions" component={Positions} />
                             <Route path="/employees" component={Employees} />

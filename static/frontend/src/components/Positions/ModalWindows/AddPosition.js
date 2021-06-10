@@ -5,12 +5,16 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import {Icon} from "@material-ui/core";
+import {Icon, IconButton, withStyles} from "@material-ui/core";
 import {getTextFieldType} from "../../../utils/getTextFieldType";
 import {getLabelName} from "../../../utils/getLabelName";
 import {connect} from "react-redux";
 import {addPosition} from "../../../actions/positions";
 import PropTypes from "prop-types";
+import CloseIcon from "@material-ui/icons/Close";
+import {compose} from "redux";
+import {addDepartment} from "../../../actions/departments";
+import {styles} from "../../../styles";
 
 class AddPosition extends Component {
     state = {
@@ -45,6 +49,8 @@ class AddPosition extends Component {
     };
 
     render() {
+        const { classes } = this.props;
+
         return (
             <div>
                 <Icon color="primary"
@@ -57,6 +63,9 @@ class AddPosition extends Component {
                 </Icon>
                 <Dialog open={this.state.open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
                     <DialogTitle id="form-dialog-title">Добавление нового отдела</DialogTitle>
+                    <IconButton aria-label="close" className={classes.closeButton} onClick={this.handleClose}>
+                        <CloseIcon />
+                    </IconButton>
                     <form onSubmit={this.onSubmit}>
                         <DialogContent>
                             {Object.keys(this.state).map((keyName) =>
@@ -95,4 +104,8 @@ class AddPosition extends Component {
 }
 
 const mapStateToProps = () => ({});
-export default connect(mapStateToProps, {addPosition})(AddPosition);
+
+export default compose(
+    connect(mapStateToProps, {addPosition}),
+    withStyles(styles)
+)(AddPosition)

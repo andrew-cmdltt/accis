@@ -2,14 +2,16 @@ package controllers
 
 import (
 	"accis/models"
-	_"accis/utils"
+	_ "accis/utils"
 	"encoding/json"
+	"fmt"
 	"github.com/gorilla/mux"
 	"net/http"
 )
 
 func GetDepartments(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	fmt.Println("ответ пришёл")
 
 	departments := models.GetDepartments()
 
@@ -49,6 +51,3 @@ func UpdateDepartment(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(department)
 }
-
-
-

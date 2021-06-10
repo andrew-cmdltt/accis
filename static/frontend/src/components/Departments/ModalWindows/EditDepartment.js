@@ -11,6 +11,10 @@ import {connect} from "react-redux";
 import {editDepartment} from "../../../actions/departments";
 import PropTypes from "prop-types";
 import EditIcon from "@material-ui/icons/Edit";
+import {IconButton, withStyles} from "@material-ui/core";
+import CloseIcon from "@material-ui/icons/Close";
+import {compose} from "redux";
+import {styles} from "../../../styles";
 
 class EditDepartment extends Component {
     state = {
@@ -51,6 +55,8 @@ class EditDepartment extends Component {
     handleClose = () => this.setState({open: false})
 
     render() {
+        const { classes } = this.props;
+
         return (
             <div style={{width: 5, height: 5, marginBottom: -5}}>
                 <EditIcon
@@ -59,6 +65,9 @@ class EditDepartment extends Component {
                 />
                 <Dialog open={this.state.open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
                     <DialogTitle id="form-dialog-title">Информация по отделу</DialogTitle>
+                    <IconButton aria-label="close" className={classes.closeButton} onClick={this.handleClose}>
+                        <CloseIcon />
+                    </IconButton>
                     <form onSubmit={this.onSubmit}>
                         <DialogContent>
                             {Object.keys(this.state).map((keyName) =>
@@ -99,4 +108,7 @@ class EditDepartment extends Component {
 
 const mapStateToProps = () => ({});
 
-export default connect(mapStateToProps, {editDepartment})(EditDepartment);
+export default compose(
+    connect(mapStateToProps, {editDepartment}),
+    withStyles(styles)
+)(EditDepartment)
